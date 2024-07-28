@@ -1,0 +1,53 @@
+Given the root of a Binary Search Tree (BST), return the minimum absolute difference between the values of any two different nodes in the tree.
+
+
+Example 1:
+Input: root = [4,2,6,1,3]
+Output: 1
+
+Example 2:
+Input: root = [1,0,48,null,null,12,49]
+Output: 1
+ 
+
+Constraints:
+The number of nodes in the tree is in the range [2, 104].
+0 <= Node.val <= 105
+
+========================================================================================================================================================================
+
+# Code of the above question
+
+class Solution {
+public:
+    int getMinimumDifference(TreeNode* root);
+
+    void inorderTraversal(TreeNode* node, vector<int> &v);
+};
+
+int Solution::getMinimumDifference(TreeNode* root) {
+    vector<int> v;
+    int i, minDiff=INT_MAX, size, diff;
+    if (root != nullptr) {
+        inorderTraversal(root, v);
+    }
+    size = v.size();
+    for (i = 1; i < size; ++i) {
+        diff = v[i] - v[i-1];
+        if (diff < minDiff) {
+            minDiff = diff;
+        }
+    }
+    return minDiff;
+}
+
+void Solution::inorderTraversal(TreeNode* node, vector<int> &v) {
+    if (node->left != nullptr) {
+        inorderTraversal(node->left, v);
+    }
+    v.emplace_back(node->val);
+    if (node->right != nullptr) {
+        inorderTraversal(node->right, v);
+    }
+    return;
+}
