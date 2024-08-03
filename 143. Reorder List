@@ -1,0 +1,61 @@
+You are given the head of a singly linked-list. The list can be represented as:
+L0 → L1 → … → Ln - 1 → Ln
+
+Reorder the list to be on the following form:
+L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
+
+You may not modify the values in the list's nodes. Only nodes themselves may be changed.
+ 
+
+Example 1:
+Input: head = [1,2,3,4]
+Output: [1,4,2,3]
+
+Example 2:
+Input: head = [1,2,3,4,5]
+Output: [1,5,2,4,3]
+ 
+
+Constraints:
+The number of nodes in the list is in the range [1, 5 * 104].
+1 <= Node.val <= 1000
+
+================================================================================================================================================================================
+
+# Code of the above question 
+
+class Solution {
+public:
+    void reorderList(ListNode* head) { 
+        vector<ListNode*> temp;
+        ListNode* curr = head;
+        while(curr!=NULL)
+        {
+            temp.push_back(curr);
+            curr = curr->next;
+        }
+        vector<ListNode*> vec;
+        int i =0;
+        int j = temp.size()-1;
+        while(i<=j)
+        {
+            if(i==j)
+            {
+                vec.push_back(temp[i]);
+                break;
+            }   
+            vec.push_back(temp[i]);
+            vec.push_back(temp[j]);
+            i++;
+            j--;
+        }
+        head -> next = NULL;
+        curr = head;
+        for(int i=1;i<vec.size();i++)
+        {
+            ListNode* t = new ListNode(vec[i]->val);
+            curr -> next = t;
+            curr = curr -> next;
+        }
+    }
+};
