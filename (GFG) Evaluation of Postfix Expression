@@ -1,0 +1,59 @@
+Given string S representing a postfix expression, the task is to evaluate the expression and find the final value. Operators will only include the basic arithmetic operators like *, /, + and -.
+
+
+Example 1:
+Input: S = "231*+9-"
+Output: -4
+Explanation:
+After solving the given expression, 
+we have -4 as result.
+
+Example 2:
+Input: S = "123+*8-"
+Output: -3
+
+Explanation:
+After solving the given postfix 
+expression, we have -3 as result.
+
+================================================================================================================================================================================
+
+# Code of the above question 
+
+#include <bits/stdc++.h>
+using namespace std;
+int evaluatePostfix(string exp)
+{
+	stack<int> st;
+	for (int i = 0; i < exp.size(); ++i) {
+		if (isdigit(exp[i]))
+			st.push(exp[i] - '0');
+		else {
+			int val1 = st.top();
+			st.pop();
+			int val2 = st.top();
+			st.pop();
+			switch (exp[i]) {
+			case '+':
+				st.push(val2 + val1);
+				break;
+			case '-':
+				st.push(val2 - val1);
+				break;
+			case '*':
+				st.push(val2 * val1);
+				break;
+			case '/':
+				st.push(val2 / val1);
+				break;
+			}
+		}
+	}
+	return st.top();
+}
+int main()
+{
+	string exp = "231*+9-";
+	cout << "postfix evaluation: " << evaluatePostfix(exp);
+	return 0;
+}
