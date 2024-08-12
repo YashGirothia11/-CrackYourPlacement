@@ -1,0 +1,61 @@
+A celebrity is a person who is known to all but does not know anyone at a party. A party is being organized by some people.  A square matrix mat is used to represent people at the party such that if an element of row i and column j is set to 1 it means ith person knows jth person. You need to return the index of the celebrity in the party, if the celebrity does not exist, return -1.
+Note: Follow 0-based indexing.
+
+Example-01:
+Input: mat[][] = [[0 1 0],
+                [0 0 0], 
+                [0 1 0]]
+Output: 1
+Explanation: 0th and 2nd person both know 1. Therefore, 1 is the celebrity. 
+
+Example-02:
+Input: mat[][] = [[0 1],
+                [1 0]]
+Output: -1
+Explanation: The two people at the party both know each other. None of them is a celebrity.
+Expected Time Complexity: O(n2)
+Expected Auxiliary Space: O(1)
+
+Constraints:
+1 <= mat.size()<= 3000
+0 <= mat[i][j]<= 1
+
+==========================================================================================================================================================================
+
+# Code of the above question 
+
+#include <bits/stdc++.h>
+using namespace std;
+bool knows(int a, int b, vector<vector<int> >& matrix)
+{
+    return matrix[a][b];
+}
+int findCelebrity(int n, vector<vector<int> >& matrix)
+{
+    int indegree[n] = { 0 }, outdegree[n] = { 0 };
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            int x = knows(i, j, matrix);
+            outdegree[i] += x;
+            indegree[j] += x;
+        }
+    }
+    for (int i = 0; i < n; i++)
+        if (indegree[i] == n - 1 && outdegree[i] == 0)
+            return i;
+    return -1;
+}
+int main()
+{
+    int n = 4;
+    vector<vector<int> > matrix = { { 0, 0, 1, 0 },
+                                    { 0, 0, 1, 0 },
+                                    { 0, 0, 0, 0 },
+                                    { 0, 0, 1, 0 } };
+    int id = findCelebrity(n, matrix);
+    if (id == -1)
+        cout << "No celebrity";
+    else
+        cout << "Celebrity ID " << id;
+    return 0;
+}
