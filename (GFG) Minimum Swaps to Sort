@@ -1,0 +1,62 @@
+Given an array of n distinct elements. Find the minimum number of swaps required to sort the array in strictly increasing order.
+
+
+Example 1:
+Input:
+nums = {2, 8, 5, 4}
+Output:
+1
+Explanation:
+swap 8 with 4.
+
+Example 2:
+Input:
+nums = {10, 19, 6, 3, 5}
+Output:
+2
+Explanation:
+swap 10 with 3 and swap 19 with 5.
+
+Constraints:
+1 ≤ n ≤ 105
+1 ≤ numsi ≤ 106
+
+====================================================================================================================================================================================
+
+# Code of the above question 
+
+#include <bits/stdc++.h>
+using namespace std;
+int minSwaps(int arr[], int n)
+{
+    pair<int, int> arrPos[n];
+    for (int i = 0; i < n; i++) {
+        arrPos[i].first = arr[i];
+        arrPos[i].second = i;
+    }
+    sort(arrPos, arrPos + n);
+    vector<bool> vis(n, false);
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+        if (vis[i] || arrPos[i].second == i)
+            continue;
+        int cycle_size = 0;
+        int j = i;
+        while (!vis[j]) {
+            vis[j] = 1;
+            j = arrPos[j].second;
+            cycle_size++;
+        }
+        if (cycle_size > 0) {
+            ans += (cycle_size - 1);
+        }
+    }
+    return ans;
+}
+int main()
+{
+    int arr[] = { 1, 5, 4, 3, 2 };
+    int n = (sizeof(arr) / sizeof(int));
+    cout << minSwaps(arr, n);
+    return 0;
+}
