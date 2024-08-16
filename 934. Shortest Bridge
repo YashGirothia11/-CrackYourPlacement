@@ -1,0 +1,91 @@
+You are given an n x n binary matrix grid where 1 represents land and 0 represents water.
+
+An island is a 4-directionally connected group of 1's not connected to any other 1's. There are exactly two islands in grid.
+You may change 0's to 1's to connect the two islands to form one island.
+Return the smallest number of 0's you must flip to connect the two islands.
+
+
+Example 1:
+Input: grid = [[0,1],[1,0]]
+Output: 1
+
+Example 2:
+Input: grid = [[0,1,0],[0,0,0],[0,0,1]]
+Output: 2
+
+Example 3:
+Input: grid = [[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]
+Output: 1
+ 
+Constraints:
+n == grid.length == grid[i].length
+2 <= n <= 100
+grid[i][j] is either 0 or 1.
+There are exactly two islands in grid.
+
+========================================================================================================================================================================================
+
+# Code of the above question 
+
+class Solution {
+private:
+    int dx[4] = {1, -1, 0, 0};
+    int dy[4] = {0, 0, -1, 1};
+    bool check(int n, int x, int y)
+    {
+        return x >= 0 and x < n and y >= 0 and y < n; 
+    }
+public:
+    void dfs(vector<vector<int>> &grid, vector<vector<bool>> &visited, queue<pair<int, pair<int, int>>> &q, int cx, int cy)
+    {
+        visited[cx][cy] = true;
+        q.push({0, {cx, cy}});
+        for(int i = 0; i < 4; ++i)
+        {
+            int nx = cx + dx[i];
+            int ny = cy + dy[i];
+            if(check(int(grid.size()), nx, ny) and grid[nx][ny] == 1 and !visited[nx][ny])
+                dfs(grid, visited, q, nx, ny);
+        }
+    }
+    int shortestBridge(vector<vector<int>>& grid) {
+        int n = int(grid.size());
+        queue<pair<int, pair<int, int>>> q;
+        vector<vector<bool>> visited(n, vector<bool> (n));
+        bool found = false;
+        for(int x = 0; x < n; ++x) 
+        {
+            for(int y = 0; y < n; ++y)
+            {    
+                if (grid[x][y] == 1 and !visited[x][y])
+                {
+                    found = true;
+                    dfs(grid, visited, q, x, y);
+                    break;
+                }
+            }
+            if (found) break;
+        }
+        int ans = 10001;
+        while(!q.empty())
+        {
+            int dist = q.front().first;
+            int cx = q.front().second.first;
+            int cy = q.front().second.second;
+            q.pop();
+            for(int i = 0; i < 4; ++i)
+            {
+                int nx = cx + dx[i];
+                int ny = cy + dy[i];
+                if (check(n, nx, ny) and grid[nx][ny] == 0 and !visited[nx][ny])
+                {
+                    q.push({dist + 1, {nx, ny}});
+                    visited[nx][ny] = true;
+                }
+                else if (check(n, nx, ny) and grid[nx][ny] == 1 and !visited[nx][ny])
+                    ans = min(ans, dist);
+            }
+        }
+        return ans;
+    }
+};
