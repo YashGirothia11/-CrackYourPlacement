@@ -1,0 +1,132 @@
+You are given an m liter jug and a n liter jug. Both the jugs are initially empty. The jugs don’t have markings to allow measuring smaller quantities. You have to use the jugs to measure d liters of water where d is less than n. 
+(X, Y) corresponds to a state where X refers to the amount of water in Jug1 and Y refers to the amount of water in Jug2 
+Determine the path from e initial state (xi, yi) to the final state (xf, yf), where (xi, yi) is (0, 0) which indicates both Jugs are initially empty and (xf, yf) indicates a state which could be (0, d) or (d, 0).
+The operations you can perform are: 
+Empty a jug (X, 0)->(0, 0) Empty Jug 1.
+Fill a Jug, (0, 0)->(X, 0) Fill Jug 1
+Pour water from one jug to the other until one of the jugs is either empty or full, (X, Y) -> (X-d, Y+d)
+
+Examples: 
+Input : 4 3 2
+Output : {( 0,0),(0,3),(3,0),(3,3),(4,2),(0,2)}
+We have discussed the optimal solution in The Two Water Jug Puzzle. In this post, a BFS based solution is discussed.
+Here, we keep exploring all the different valid cases of the states of water in the jug simultaneously until and unless we reach the required target water.
+As provided in the problem statement, at any given state we can do either of the following operations:
+Fill a jug
+Empty a jug
+Transfer water from one jug to another until either of them gets completely filled or empty.
+
+Examples:
+      Input: X = 4, Y = 3, Z = 2
+      Output: {(0, 0), (0, 3), (3, 0), (3, 3), (4, 2), (0, 2)}
+Explanation: 
+    Step 1:- First we will fill the 4 litre jug completely with water. 
+    Step 2:- Then optimal approach would be to empty water from 4-litre jug into 3-litre  (leaving 1L water in 4L jug and 3L completely full). Hence we got 1L water.
+    Step 3:- Now, Empty water from 3L.
+    Step 4:- Pour the water from 4L jug into 3L jug Now 4L container is completely empty and 1L water in present in 3L litre jug.
+    Step 5:- Fill the 4L jug with water completely again.
+    Step 6:- On transferring  water from 4L jug to 3L jug, we will get 2L water in 4L jug which was our required quantity. 
+
+======================================================================================================================================================================================================
+
+# Code of the above question  
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef pair<int, int> pii;
+void printpath(map<pii, pii> mp, pii u)
+{
+	if (u.first == 0 && u.second == 0) {
+		cout << 0 << " " << 0 << endl;
+		return;
+	}
+	printpath(mp, mp[u]);
+	cout << u.first << " " << u.second << endl;
+}
+void BFS(int a, int b, int target)
+{
+	map<pii, int> m;
+	bool isSolvable = false;
+	map<pii, pii> mp;
+	queue<pii> q;
+	q.push(make_pair(0, 0));
+	while (!q.empty()) {
+		auto u = q.front();
+		q.pop();
+		if (m[u] == 1)
+			continue;
+		if ((u.first > a || u.second > b || u.first < 0
+			|| u.second < 0))
+			continue;
+		m[{ u.first, u.second }] = 1;
+		if (u.first == target || u.second == target) {
+			isSolvable = true;
+			printpath(mp, u);
+			if (u.first == target) {
+				if (u.second != 0)
+					cout << u.first << " " << 0 << endl;
+			}
+			else {
+				if (u.first != 0)
+					cout << 0 << " " << u.second << endl;
+			}
+			return;
+		}
+		if (m[{ u.first, b }] != 1) {
+			q.push({ u.first, b });
+			mp[{ u.first, b }] = u;
+		}
+		if (m[{ a, u.second }] != 1) {
+			q.push({ a, u.second });
+			mp[{ a, u.second }] = u;
+		}
+		int d = b - u.second;
+		if (u.first >= d) {
+			int c = u.first - d;
+			if (m[{ c, b }] != 1) {
+				q.push({ c, b });
+				mp[{ c, b }] = u;
+			}
+		}
+		else {
+			int c = u.first + u.second;
+			if (m[{ 0, c }] != 1) {
+				q.push({ 0, c });
+				mp[{ 0, c }] = u;
+			}
+		}
+		d = a - u.first;
+		if (u.second >= d) {
+			int c = u.second - d;
+			if (m[{ a, c }] != 1) {
+				q.push({ a, c });
+				mp[{ a, c }] = u;
+			}
+		}
+		else {
+			int c = u.first + u.second;
+			if (m[{ c, 0 }] != 1) {
+				q.push({ c, 0 });
+				mp[{ c, 0 }] = u;
+			}
+		}
+		if (m[{ u.first, 0 }] != 1) {
+			q.push({ u.first, 0 });
+			mp[{ u.first, 0 }] = u;
+		}
+		if (m[{ 0, u.second }] != 1) {
+			q.push({ 0, u.second });
+			mp[{ 0, u.second }] = u;
+		}
+	}
+	if (!isSolvable)
+		cout << "No solution";
+}
+int main()
+{
+	int Jug1 = 4, Jug2 = 3, target = 2;
+	cout << "Path from initial state "
+			"to solution state ::\n";
+	BFS(Jug1, Jug2, target);
+	return 0;
+}
