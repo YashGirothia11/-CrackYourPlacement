@@ -1,0 +1,99 @@
+Given a string A and a dictionary of n words B, find out if A can be segmented into a space-separated sequence of dictionary words. 
+
+
+Example 1:
+Input:
+n = 12
+B = { "i", "like", "sam", "sung", "samsung",
+"mobile","ice","cream", "icecream", "man",
+"go", "mango" }, A = "ilike"
+Output: 1
+Explanation: The string can be segmented as
+"i like".
+
+Example 2:
+Input: 
+n = 12 
+B = { "i", "like", "sam", "sung", "samsung",
+"mobile","ice","cream", "icecream", "man", 
+"go", "mango" }, A = "ilikesamsung" 
+Output: 1
+Explanation: The string can be segmented as 
+"i like samsung" or "i like sam sung".
+
+======================================================================================================================================================================================
+
+# Code of the above question  
+
+#include <iostream>
+using namespace std;
+const int ALPHABET_SIZE = 26;
+struct TrieNode {
+	struct TrieNode* children[ALPHABET_SIZE];
+	bool isEndOfWord;
+};
+struct TrieNode* getNode(void)
+{
+	struct TrieNode* pNode = new TrieNode;
+	pNode->isEndOfWord = false;
+	for (int i = 0; i < ALPHABET_SIZE; i++)
+		pNode->children[i] = NULL;
+	return pNode;
+}
+void insert(struct TrieNode* root, string key)
+{
+	struct TrieNode* pCrawl = root;
+	for (int i = 0; i < key.length(); i++) {
+		int index = key[i] - 'a';
+		if (!pCrawl->children[index])
+			pCrawl->children[index] = getNode();
+		pCrawl = pCrawl->children[index];
+	}
+	pCrawl->isEndOfWord = true;
+}
+bool search(struct TrieNode* root, string key)
+{
+	struct TrieNode* pCrawl = root;
+	for (int i = 0; i < key.length(); i++) {
+		int index = key[i] - 'a';
+		if (!pCrawl->children[index])
+			return false;
+		pCrawl = pCrawl->children[index];
+	}
+	return (pCrawl != NULL && pCrawl->isEndOfWord);
+}
+bool wordBreak(string str, TrieNode* root)
+{
+	int size = str.size();
+	if (size == 0)
+		return true;
+	for (int i = 1; i <= size; i++) {
+		if (search(root, str.substr(0, i))
+			&& wordBreak(str.substr(i, size - i), root))
+			return true;
+	}
+	return false;
+}
+int main()
+{
+	string dictionary[]
+		= { "mobile", "samsung", "sam", "sung", "ma\n",
+			"mango", "icecream", "and", "go", "i",
+			"like", "ice",	 "cream" };
+	int n = sizeof(dictionary) / sizeof(dictionary[0]);
+	struct TrieNode* root = getNode();
+	for (int i = 0; i < n; i++)
+		insert(root, dictionary[i]);
+	wordBreak("ilikesamsung", root) ? cout << "Yes\n"
+									: cout << "No\n";
+	wordBreak("iiiiiiii", root) ? cout << "Yes\n"
+								: cout << "No\n";
+	wordBreak("", root) ? cout << "Yes\n" : cout << "No\n";
+	wordBreak("ilikelikeimangoiii", root) ? cout << "Yes\n"
+										: cout << "No\n";
+	wordBreak("samsungandmango", root) ? cout << "Yes\n"
+									: cout << "No\n";
+	wordBreak("samsungandmangok", root) ? cout << "Yes\n"
+										: cout << "No\n";
+	return 0;
+}
