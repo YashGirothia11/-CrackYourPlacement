@@ -1,0 +1,44 @@
+You are given an array arr[] of N integers. The task is to find the smallest positive number missing from the array.
+Note: Positive number starts from 1.
+
+
+Example 1:
+Input:
+N = 5
+arr[] = {1,2,3,4,5}
+Output: 6
+Explanation: Smallest positive missing 
+number is 6.
+
+Example 2:
+Input:
+N = 5
+arr[] = {0,-10,1,3,-20}
+Output: 2
+Explanation: Smallest positive missing 
+number is 2.
+
+================================================================================================================================================================================
+
+# Code of the above question 
+
+#include <bits/stdc++.h>
+using namespace std;
+int firstMissingPos(int A[], int n)
+{
+    bool present[n + 1] = { false };
+    for (int i = 0; i < n; i++) {
+        if (A[i] > 0 && A[i] <= n)
+            present[A[i]] = true;
+    }
+    for (int i = 1; i <= n; i++)
+        if (!present[i])
+            return i;
+    return n + 1;
+}
+int main()
+{
+    int arr[] = { 0, 10, 2, -10, -20 };
+    int size = sizeof(arr) / sizeof(arr[0]);
+    cout << firstMissingPos(arr, size);
+}
