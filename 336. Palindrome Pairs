@@ -1,0 +1,94 @@
+You are given a 0-indexed array of unique strings words.
+A palindrome pair is a pair of integers (i, j) such that:
+0 <= i, j < words.length,
+i != j, and
+words[i] + words[j] (the concatenation of the two strings) is a palindrome.
+Return an array of all the palindrome pairs of words.
+You must write an algorithm with O(sum of words[i].length) runtime complexity.
+
+
+Example 1:
+Input: words = ["abcd","dcba","lls","s","sssll"]
+Output: [[0,1],[1,0],[3,2],[2,4]]
+Explanation: The palindromes are ["abcddcba","dcbaabcd","slls","llssssll"]
+
+Example 2:
+Input: words = ["bat","tab","cat"]
+Output: [[0,1],[1,0]]
+Explanation: The palindromes are ["battab","tabbat"]
+
+Example 3:
+Input: words = ["a",""]
+Output: [[0,1],[1,0]]
+Explanation: The palindromes are ["a","a"]
+
+Constraints:
+1 <= words.length <= 5000
+0 <= words[i].length <= 300
+words[i] consists of lowercase English letters.
+
+========================================================================================================================================================================================
+
+# Code of the above question 
+
+class Solution {
+public:
+    unordered_map<string, bool> check;
+    bool palin(string &s)
+    {
+        if(check.find(s) != check.end())
+            return check[s];
+        if(s.length() == 0){
+            check[s] = true;
+            return true;
+        }
+        int n = s.length();
+        for(int i = 0; i <= n/2; i++)
+        {
+            if(s[i] != s[(n - i) - 1])
+            {
+                check[s] = false;
+                return false;
+            }
+        }
+        check[s] = true;
+        return true;    
+    }
+    vector<vector<int>> palindromePairs(vector<string>& words) {
+        unordered_map<string, int> mp;
+        vector<vector<int>> ans;
+        for(int i = 0 ; i < words.size(); i++)
+        {
+            string str = words[i];
+            reverse(str.begin(), str.end());
+            mp[str] = i;
+        }
+        if(mp.find("") != mp.end())
+        {
+            for(int i = 0; i < words.size(); i++)
+            {
+                if(i == mp[""])
+                    continue;
+                if(palin(words[i]))
+                {
+                    ans.push_back({i, mp[""]});
+                }
+            }
+        }
+        for(int i = 0 ; i < words.size(); i++)
+        {
+            string right = words[i];
+            string left = "";
+            for(int j = 0 ; j < words[i].length(); j++)
+            {
+                left.push_back(words[i][j]);
+                right.erase(right.begin() + 0);
+                if(mp.find(left) != mp.end() and palin(right) and mp[left] != i)
+                    ans.push_back({i, mp[left]});     
+                if(mp.find(right) != mp.end() and palin(left) and mp[right] != i)
+                    ans.push_back({mp[right], i});
+            }
+        }
+        return ans;
+    }
+};
