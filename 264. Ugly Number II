@@ -1,0 +1,45 @@
+An ugly number is a positive integer whose prime factors are limited to 2, 3, and 5.
+Given an integer n, return the nth ugly number.
+ 
+
+Example 1:
+Input: n = 10
+Output: 12
+Explanation: [1, 2, 3, 4, 5, 6, 8, 9, 10, 12] is the sequence of the first 10 ugly numbers.
+
+Example 2:
+Input: n = 1
+Output: 1
+Explanation: 1 has no prime factors, therefore all of its prime factors are limited to 2, 3, and 5.
+
+Constraints:
+1 <= n <= 1690
+
+========================================================================================================================================================================
+
+# Code of the above question  
+
+class Solution {
+public:
+    int nthUglyNumber(int n) {
+        vector<int> primes = {2, 3, 5};  
+        vector<int> indices = {0, 0, 0}; 
+        vector<int> uglyArr(1, 1);       
+
+        for (int i = 1; i < n; ++i) {
+            vector<int> next_uglies = {
+                uglyArr[indices[0]] * primes[0],
+                uglyArr[indices[1]] * primes[1],
+                uglyArr[indices[2]] * primes[2]
+            };
+            int min_value = *min_element(next_uglies.begin(), next_uglies.end()); 
+            uglyArr.push_back(min_value); 
+            for (int j = 0; j < 3; ++j) {
+                if (next_uglies[j] == min_value) {
+                    ++indices[j];
+                }
+            }
+        }
+        return uglyArr[n - 1];
+    }
+};
