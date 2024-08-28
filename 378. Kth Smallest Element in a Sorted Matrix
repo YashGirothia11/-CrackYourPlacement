@@ -1,0 +1,58 @@
+Given an n x n matrix where each of the rows and columns is sorted in ascending order, return the kth smallest element in the matrix.
+Note that it is the kth smallest element in the sorted order, not the kth distinct element.
+You must find a solution with a memory complexity better than O(n2).
+
+
+Example 1:
+Input: matrix = [[1,5,9],[10,11,13],[12,13,15]], k = 8
+Output: 13
+Explanation: The elements in the matrix are [1,5,9,10,11,12,13,13,15], and the 8th smallest number is 13
+
+Example 2:
+Input: matrix = [[-5]], k = 1
+Output: -5
+
+Constraints:
+n == matrix.length == matrix[i].length
+1 <= n <= 300
+-109 <= matrix[i][j] <= 109
+All the rows and columns of matrix are guaranteed to be sorted in non-decreasing order.
+1 <= k <= n2
+
+========================================================================================================================================================================
+
+# Code of the above question  
+
+class MinHeap {
+public:
+    bool operator()(const tuple<int, int, int>& a,
+                    const tuple<int, int, int>& b) {
+        return get<0>(a) > get<0>(b);
+    }
+};
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        int rowCount = matrix.size();
+        priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>,
+                       MinHeap>
+            minHeap;
+        for (int i = 0; i < min(rowCount, k); ++i) {
+            minHeap.push(make_tuple(matrix[i][0], i, 0));
+        }
+        int numbersChecked = 0, smallestElement = 0;
+        while (!minHeap.empty()) {
+            auto [value, rowIndex, colIndex] = minHeap.top();
+            minHeap.pop();
+            smallestElement = value;
+            numbersChecked++;
+            if (numbersChecked == k)
+                break;
+            if (colIndex + 1 < matrix[rowIndex].size()) {
+                minHeap.push(make_tuple(matrix[rowIndex][colIndex + 1],
+                                        rowIndex, colIndex + 1));
+            }
+        }
+        return smallestElement;
+    }
+};
