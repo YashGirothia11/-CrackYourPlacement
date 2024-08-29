@@ -1,0 +1,44 @@
+Given an array having both positive and negative integers. The task is to compute the length of the largest subarray with sum 0.
+
+
+Examples:
+
+Input: arr[] = {15,-2,2,-8,1,7,10,23}, n = 8
+Output: 5
+Explanation: The largest subarray with sum 0 is -2 2 -8 1 7.
+
+Input: arr[] = {2,10,4}, n = 3
+Output: 0
+Explanation: There is no subarray with 0 sum.
+
+Input: arr[] = {1, 0, -4, 3, 1, 0}, n = 6
+Output: 5
+Explanation: The subarray is 0 -4 3 1 0.
+
+====================================================================================================================================================================================
+
+# Code of the above question 
+
+#include <bits/stdc++.h>
+using namespace std;
+int maxLen(int arr[], int N)
+{
+    int max_len = 0; 
+    for (int i = 0; i < N; i++) {
+        int curr_sum = 0;
+        for (int j = i; j < N; j++) {
+            curr_sum += arr[j];
+            if (curr_sum == 0)
+                max_len = max(max_len, j - i + 1);
+        }
+    }
+    return max_len;
+}
+int main()
+{
+    int arr[] = {15, -2, 2, -8, 1, 7, 10, 23};
+    int N = sizeof(arr) / sizeof(arr[0]);
+    cout << "Length of the longest 0 sum subarray is "
+         << maxLen(arr, N);
+    return 0;
+}
