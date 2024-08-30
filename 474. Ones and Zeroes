@@ -1,0 +1,101 @@
+You are given an array of binary strings strs and two integers m and n.
+Return the size of the largest subset of strs such that there are at most m 0's and n 1's in the subset.
+A set x is a subset of a set y if all elements of x are also elements of y.
+
+
+Example 1:
+Input: strs = ["10","0001","111001","1","0"], m = 5, n = 3
+Output: 4
+Explanation: The largest subset with at most 5 0's and 3 1's is {"10", "0001", "1", "0"}, so the answer is 4.
+Other valid but smaller subsets include {"0001", "1"} and {"10", "1", "0"}.
+{"111001"} is an invalid subset because it contains 4 1's, greater than the maximum of 3.
+
+Example 2:
+Input: strs = ["10","0","1"], m = 1, n = 1
+Output: 2
+Explanation: The largest subset is {"0", "1"}, so the answer is 2.
+ 
+Constraints:
+1 <= strs.length <= 600
+1 <= strs[i].length <= 100
+strs[i] consists only of digits '0' and '1'.
+1 <= m, n <= 100
+
+========================================================================================================================================================================
+
+# Code of the above question 
+
+class Solution {
+public:
+    int solveFindMax(vector<pair<int,int>>&strs,int i,int m,int n)
+    {
+         if(i>=strs.size())return 0;
+         int zeroes = strs[i].first;
+         int ones = strs[i].second;
+         int include=0,exclude=0;
+         if(m-zeroes >=0 && n-ones>=0)
+         {
+            include = 1 + solveFindMax(strs,i+1,m-zeroes,n-ones);
+         }
+         exclude = solveFindMax(strs,i+1,m,n);
+         return max(include,exclude);
+    }
+    int memoFindMax(vector<pair<int,int>>&strs,int i, int m,int n, vector<vector<vector<int>>>&dp)
+    {
+        if(i>=strs.size())return 0;
+        if(dp[i][m][n]!=-1)
+        {  
+            return dp[i][m][n];        
+        }
+         int zeroes = strs[i].first;
+         int ones = strs[i].second;
+         int include=0,exclude=0;
+         if(m-zeroes >=0 && n-ones>=0)
+         {
+            include = 1 + memoFindMax(strs,i+1,m-zeroes,n-ones,dp);
+         }
+         exclude = memoFindMax(strs,i+1,m,n,dp);
+         dp[i][m][n] = max(include,exclude);
+         return dp[i][m][n] ;
+    }
+    int tabuFindMax(vector<pair<int,int>>&strs,int m, int n)
+    {
+        vector<vector<vector<int>>>dp(strs.size()+1,vector<vector<int>>(m+1,vector<int>(n+1,0)));
+        for(int i = strs.size()-1;i>=0;i--)
+        {
+            for( int j=0;j<=m;j++)
+            {
+                for(int k=0;k<=n;k++)
+                {
+                    int zeroes = strs[i].first;
+                    int ones = strs[i].second;
+                    int include=0,exclude=0;
+                    if(j-zeroes >=0 && k-ones>=0)
+                    {
+                        include = 1 + dp[i+1][j-zeroes][k-ones];
+                    }
+                    exclude = dp[i+1][j][k];       
+                    dp[i][j][k] = max(include,exclude);
+                }
+            }
+        }
+        return dp[0][m][n];
+    }
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        vector<pair<int,int>>str1; 
+        for(auto s:strs)
+        {
+            int ones=0,zeros=0;
+            for(auto ch:s)
+            {
+                if(ch=='1')ones++;
+                if(ch=='0')zeros++;
+            }
+            str1.push_back({zeros,ones});
+        }
+        int i=0;
+        vector<vector<vector<int>>>dp(str1.size()+1,vector<vector<int>>(m+1,vector<int>(n+1,-1)));
+        int ans3 = tabuFindMax(str1,m,n);
+        return ans3;
+    }
+};
