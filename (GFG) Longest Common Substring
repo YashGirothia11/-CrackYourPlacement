@@ -1,0 +1,49 @@
+You are given two strings str1 and str2. Your task is to find the length of the longest common substring among the given strings.
+
+
+Examples:
+
+Input: str1 = "ABCDGH", str2 = "ACDGHR"
+Output: 4
+Explanation: The longest common substring is "CDGH" which has length 4.
+
+Input: str1 = "ABC", str2 = "ACB"
+Output: 1
+Explanation: The longest common substrings are "A", "B", "C" all having length 1.
+
+Expected Time Complexity: O(n*m).
+Expected Auxiliary Space: O(n*m).
+
+========================================================================================================================================================================================
+
+# Code of the above question 
+
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+int maxCommStr(const string& s1, const string& s2) {
+    int m = s1.length();
+    int n = s2.length();
+
+    int res = 0;
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            int curr = 0;
+            while ((i + curr) < m && (j + curr) < n 
+                   && s1[i + curr] == s2[j + curr]) {
+                curr++;
+            }
+            res = max(res, curr);
+        }
+    }
+    return res;
+}
+
+int main() {
+    string s1 = "geeksforgeeks";
+    string s2 = "practicewritegeekscourses";
+    cout << maxCommStr(s1, s2) << endl;
+    return 0;
+}
