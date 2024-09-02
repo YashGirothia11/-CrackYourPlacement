@@ -1,0 +1,78 @@
+An Optimal Binary Search Tree (OBST), also known as a Weighted Binary Search Tree, is a binary search tree that minimizes the expected search cost. In a binary search tree, the search cost is the number of comparisons required to search for a given key.
+In an OBST, each node is assigned a weight that represents the probability of the key being searched for. The sum of all the weights in the tree is 1.0. The expected search cost of a node is the sum of the product of its depth and weight, and the expected search cost of its children.
+To construct an OBST, we start with a sorted list of keys and their probabilities. We then build a table that contains the expected search cost for all possible sub-trees of the original list. We can use dynamic programming to fill in this table efficiently. Finally, we use this table to construct the OBST.
+The time complexity of constructing an OBST is O(n^3), where n is the number of keys. However, with some optimizations, we can reduce the time complexity to O(n^2). Once the OBST is constructed, the time complexity of searching for a key is O(log n), the same as for a regular binary search tree.
+The OBST is a useful data structure in applications where the keys have different probabilities of being searched for. It can be used to improve the efficiency of searching and retrieval operations in databases, compilers, and other computer programs.
+Given a sorted array key [0.. n-1] of search keys and an array freq[0.. n-1] of frequency counts, where freq[i] is the number of searches for keys[i]. Construct a binary search tree of all keys such that the total cost of all the searches is as small as possible.
+Let us first define the cost of a BST. The cost of a BST node is the level of that node multiplied by its frequency. The level of the root is 1.
+
+
+Examples:  
+Input:  keys[] = {10, 12}, freq[] = {34, 50}
+There can be following two possible BSTs 
+        10                       12
+          \                     / 
+           12                 10
+          I                     II
+Frequency of searches of 10 and 12 are 34 and 50 respectively.
+The cost of tree I is 34*1 + 50*2 = 134
+The cost of tree II is 50*1 + 34*2 = 118 
+
+
+Input:  keys[] = {10, 12, 20}, freq[] = {34, 8, 50}
+There can be following possible BSTs
+    10                12                 20         10              20
+      \             /    \              /             \            /
+      12          10     20           12               20         10  
+        \                            /                 /           \
+         20                        10                12             12  
+     I               II             III             IV             V
+Among all possible BSTs, cost of the fifth BST is minimum.  
+Cost of the fifth BST is 1*50 + 2*34 + 3*8 = 142 
+
+========================================================================================================================================================================================
+
+# code of the above question 
+
+#include <bits/stdc++.h>
+using namespace std;
+int sum(int freq[], int i, int j); 
+int optCost(int freq[], int i, int j) 
+{ 
+	if (j < i) 
+		return 0; 
+	if (j == i) 
+		return freq[i]; 
+	int fsum = sum(freq, i, j); 
+
+	int min = INT_MAX; 
+	for (int r = i; r <= j; ++r) 
+	{ 
+		int cost = optCost(freq, i, r - 1) + 
+				optCost(freq, r + 1, j); 
+		if (cost < min) 
+			min = cost; 
+	} 
+	return min + fsum; 
+} 
+int optimalSearchTree(int keys[], 
+					int freq[], int n) 
+{ 
+	return optCost(freq, 0, n - 1); 
+} 
+int sum(int freq[], int i, int j) 
+{ 
+	int s = 0; 
+	for (int k = i; k <= j; k++) 
+	s += freq[k]; 
+	return s; 
+} 
+int main() 
+{ 
+	int keys[] = {10, 12, 20}; 
+	int freq[] = {34, 8, 50}; 
+	int n = sizeof(keys) / sizeof(keys[0]); 
+	cout << "Cost of Optimal BST is "
+		<< optimalSearchTree(keys, freq, n); 
+	return 0; 
+} 
