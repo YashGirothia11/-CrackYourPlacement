@@ -1,0 +1,83 @@
+You are given an integer array nums. You want to maximize the number of points you get by performing the following operation any number of times:
+Pick any nums[i] and delete it to earn nums[i] points. Afterwards, you must delete every element equal to nums[i] - 1 and every element equal to nums[i] + 1.
+Return the maximum number of points you can earn by applying the above operation some number of times.
+ 
+
+Example 1:
+Input: nums = [3,4,2]
+Output: 6
+Explanation: You can perform the following operations:
+- Delete 4 to earn 4 points. Consequently, 3 is also deleted. nums = [2].
+- Delete 2 to earn 2 points. nums = [].
+You earn a total of 6 points.
+
+Example 2:
+Input: nums = [2,2,3,3,3,4]
+Output: 9
+Explanation: You can perform the following operations:
+- Delete a 3 to earn 3 points. All 2's and 4's are also deleted. nums = [3,3].
+- Delete a 3 again to earn 3 points. nums = [3].
+- Delete a 3 once more to earn 3 points. nums = [].
+You earn a total of 9 points.
+
+Constraints:
+1 <= nums.length <= 2 * 104
+1 <= nums[i] <= 104
+
+======================================================================================================================================================================================
+
+# Code of the above question 
+
+class Solution {
+public:
+    vector<int>arr;
+    int n;
+    int dp[20000+1][2];
+    int maxPointsEarned(int idx,int flag){
+        int ans = 0;
+        if(idx == n){
+            return 0;
+        }
+        if(dp[idx][flag] != -1){
+            return dp[idx][flag];
+        }
+        if(flag == 0 || idx == 0){
+            int i = idx;
+            int sum = 0;
+            while(i < n and arr[i] == arr[idx]){
+                sum += arr[i];
+                i++;
+            }
+            ans = maxPointsEarned(i,1) + sum;
+            ans = max(ans,maxPointsEarned(idx+1,0));
+        }
+        else{
+            if(arr[idx] - arr[idx-1] == 1){
+                int i = idx;
+                while(i < n and arr[i] == arr[idx]){
+                    i++;
+                }
+                ans = max(ans,maxPointsEarned(i,0));
+            }else{
+            int i = idx;
+            int sum = 0;
+            while(i < n and arr[i] == arr[idx]){
+                sum += arr[i];
+                i++;
+            }
+            ans = maxPointsEarned(i,1) + sum;
+            ans = max(ans,maxPointsEarned(idx+1,0));
+            }
+        }
+        return dp[idx][flag] = ans;
+    }
+
+    int deleteAndEarn(vector<int>& nums) {
+        arr = nums;
+        sort(arr.begin(),arr.end());
+        n = arr.size();
+        memset(dp,-1,sizeof(dp));
+        int x = maxPointsEarned(0,0);
+        return x;
+    }
+};
