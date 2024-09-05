@@ -1,0 +1,54 @@
+You are given a string s and an integer k. You can choose any character of the string and change it to any other uppercase English character. You can perform this operation at most k times.
+Return the length of the longest substring containing the same letter you can get after performing the above operations.
+
+
+Example 1:
+Input: s = "ABAB", k = 2
+Output: 4
+Explanation: Replace the two 'A's with two 'B's or vice versa.
+
+Example 2:
+Input: s = "AABABBA", k = 1
+Output: 4
+Explanation: Replace the one 'A' in the middle with 'B' and form "AABBBBA".
+The substring "BBBB" has the longest repeating letters, which is 4.
+There may exists other ways to achieve this answer too.
+ 
+Constraints:
+1 <= s.length <= 105
+s consists of only uppercase English letters.
+0 <= k <= s.length
+
+========================================================================================================================================================================
+
+# Code of the above question 
+
+class Solution {
+public:
+    int slidingWindow(string &s, int k, char &ch)
+    {
+        int n = s.size(); 
+        int mx = 0; 
+        int i = 0, j = 0; 
+        while(j < n)
+        {
+            if(s[j++] != ch) 
+                k--; 
+            while(k < 0)
+                if(s[i++] != ch) 
+                    k++; 
+            mx = max(mx, j - i); 
+        }
+        return mx; 
+    }
+    int characterReplacement(string s, int k) 
+    {
+        int ans = 0; 
+        for(char ch = 'A'; ch <= 'Z'; ch++)
+        {
+            int mx = slidingWindow(s, k, ch);
+            ans = max(ans, mx); 
+        }
+        return ans; 
+    }
+};
