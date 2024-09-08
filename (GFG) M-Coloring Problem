@@ -1,0 +1,92 @@
+Given an undirected graph and an integer M. The task is to determine if the graph can be colored with at most M colors such that no two adjacent vertices of the graph are colored with the same color. Here coloring of a graph means the assignment of colors to all vertices. Print 1 if it is possible to colour vertices and 0 otherwise.
+
+
+Example 1:
+Input:
+N = 4
+M = 3
+E = 5
+Edges[] = {(0,1),(1,2),(2,3),(3,0),(0,2)}
+Output: 1
+Explanation: It is possible to colour the
+given graph using 3 colours.
+
+Example 2:
+Input:
+N = 3
+M = 2
+E = 3
+Edges[] = {(0,1),(1,2),(0,2)}
+Output: 0
+Your Task:
+Your task is to complete the function graphColoring() which takes the 2d-array graph[], the number of colours and the number of nodes as inputs and returns true if answer exists otherwise false. 1 is printed if the returned value is true, 0 otherwise. The printing is done by the driver's code.
+Note: In Example there are Edges not the graph.Graph will be like, if there is an edge between vertex X and vertex Y graph[] will contain 1 at graph[X-1][Y-1], else 0. In 2d-array graph[ ], nodes are 0-based indexed, i.e. from 0 to N-1.Function will be contain 2-D graph not the edges.
+
+Constraints:
+1 ≤ N ≤ 20
+1 ≤ E ≤ (N*(N-1))/2
+1 ≤ M ≤ N
+
+=============================================================================================================================================================================================
+
+# Code of the above question 
+
+#include <bits/stdc++.h>
+using namespace std;
+#define V 4
+void printSolution(int color[]);
+bool isSafe(int v, bool graph[V][V], int color[], int c)
+{
+	for (int i = 0; i < V; i++)
+		if (graph[v][i] && c == color[i])
+			return false;
+	return true;
+}
+bool graphColoringUtil(bool graph[V][V], int m, int color[], int v)
+{
+	if (v == V)
+		return true;
+	for (int c = 1; c <= m; c++) {
+		if (isSafe(v, graph, color, c)) {
+			color[v] = c;
+			if (graphColoringUtil(graph, m, color, v + 1)
+				== true)
+				return true;
+			color[v] = 0;
+		}
+	}
+	return false;
+}
+bool graphColoring(bool graph[V][V], int m)
+{
+	int color[V];
+	for (int i = 0; i < V; i++)
+		color[i] = 0;
+	if (graphColoringUtil(graph, m, color, 0) == false) {
+		cout << "Solution does not exist";
+		return false;
+	}
+	printSolution(color);
+	return true;
+}
+void printSolution(int color[])
+{
+	cout << "Solution Exists:"
+		<< " Following are the assigned colors"
+		<< "\n";
+	for (int i = 0; i < V; i++)
+		cout << " " << color[i] << " ";
+	cout << "\n";
+}
+int main()
+{
+	bool graph[V][V] = {
+		{ 0, 1, 1, 1 },
+		{ 1, 0, 1, 0 },
+		{ 1, 1, 0, 1 },
+		{ 1, 0, 1, 0 },
+	};
+	int m = 3;
+	graphColoring(graph, m);
+	return 0;
+}
